@@ -375,6 +375,7 @@ interface CommonRuleAndGroupProps<F extends FullField = FullField, O extends str
   shiftDownDisabled?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   context?: any;
+  combinator?: ReactNode
 }
 
 /**

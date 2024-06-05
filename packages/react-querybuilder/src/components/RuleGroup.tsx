@@ -127,6 +127,7 @@ export const RuleGroupHeaderComponents = React.memo(
             ruleOrGroup={rg.ruleGroup}
           />
         )}
+        {rg.path.length > 0 && <span className="statement">Any of the following are true...</span>}
         {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
           <CombinatorSelectorControlElement
             key={TestID.combinators}
@@ -282,28 +283,10 @@ export const RuleGroupBodyComponents = React.memo(
             const shiftUpDisabled = pathsAreEqual([0], thisPath);
             const shiftDownDisabled = rg.path.length === 0 && idx === ruleArrayLength - 1;
             const key = typeof r === 'string' ? [...thisPath, r].join('-') : r.id;
+            const showCombinatorBetweenRules =
+              !rg.schema.independentCombinators && rg.schema.showCombinatorsBetweenRules;
             return (
               <Fragment key={key}>
-                {idx > 0 &&
-                  !rg.schema.independentCombinators &&
-                  rg.schema.showCombinatorsBetweenRules && (
-                    <InlineCombinatorControlElement
-                      key={TestID.inlineCombinator}
-                      options={rg.schema.combinators}
-                      value={rg.combinator}
-                      title={rg.translations.combinators.title}
-                      className={rg.classNames.combinators}
-                      handleOnChange={rg.onCombinatorChange}
-                      rules={rg.ruleGroup.rules}
-                      level={rg.path.length}
-                      context={rg.context}
-                      validation={rg.validationResult}
-                      component={CombinatorSelectorControlElement}
-                      path={thisPath}
-                      disabled={rg.disabled}
-                      schema={rg.schema}
-                    />
-                  )}
                 {typeof r === 'string' ? (
                   <InlineCombinatorControlElement
                     key={`${TestID.inlineCombinator}-independent`}
@@ -357,6 +340,32 @@ export const RuleGroupBodyComponents = React.memo(
                     shiftUpDisabled={shiftUpDisabled}
                     shiftDownDisabled={shiftDownDisabled}
                     context={rg.context}
+                    combinator={
+                      idx === 1 && showCombinatorBetweenRules ? (
+                        <InlineCombinatorControlElement
+                          key={TestID.inlineCombinator}
+                          options={rg.schema.combinators}
+                          value={rg.combinator}
+                          title={rg.translations.combinators.title}
+                          className={rg.classNames.combinators}
+                          handleOnChange={rg.onCombinatorChange}
+                          rules={rg.ruleGroup.rules}
+                          level={rg.path.length}
+                          context={rg.context}
+                          validation={rg.validationResult}
+                          component={CombinatorSelectorControlElement}
+                          path={thisPath}
+                          disabled={rg.disabled}
+                          schema={rg.schema}
+                        />
+                      ) : idx > 1 && showCombinatorBetweenRules ? (
+                        <span className={rg.classNames.combinators}>{rg.combinator}</span>
+                      ) : rg.path.length === 0 && showCombinatorBetweenRules ? (
+                        <span className={rg.classNames.combinators}>Where</span>
+                      ) : (
+                        <span className={rg.classNames.combinators} />
+                      )
+                    }
                   />
                 )}
               </Fragment>
