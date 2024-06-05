@@ -79,6 +79,9 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps) => {
         const dateTimeValue = dateTime.isValid() ? dateTime.toDate() : null;
         return (
           <DateTimePicker
+            placeholder={undefined}
+            onPointerEnterCapture={undefined}
+            onPointerLeaveCapture={undefined}
             key={key}
             value={dateTimeValue}
             className={standardClassnames.valueListItem}
@@ -230,6 +233,9 @@ export const MantineValueEditor = (allProps: MantineValueEditorProps) => {
     if (inputTypeCoerced === 'datetime-local') {
       return (
         <DateTimePicker
+          placeholder={undefined}
+          onPointerEnterCapture={undefined}
+          onPointerLeaveCapture={undefined}
           data-testid={testID}
           value={!!value && dayjs(value).isValid() ? dayjs(value).toDate() : null}
           className={className}
