@@ -1,0 +1,64 @@
+{
+  "name": "@react-querybuilder/material",
+  "description": "Custom MUI (Material Design) components for react-querybuilder",
+  "version": "7.4.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_material.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_material.d.mts",
+        "default": "./dist/react-querybuilder_material.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_material.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/cjs/react-querybuilder_material.cjs.production.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/material"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "scripts": {
+    "start": "bunx --bun vite",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.19",
+    "@mui/material": "^5.15.19",
+    "@testing-library/react": "^15.0.7",
+    "@types/react": "^18.3.3",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-querybuilder": "^7.4.1",
+    "regenerator-runtime": "^0.14.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.12"
+  },
+  "peerDependencies": {
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "@mui/icons-material": ">=5.0.0",
+    "@mui/material": ">=5.0.0",
+    "react": ">=18",
+    "react-querybuilder": "^7.4.1"
+  }
+}

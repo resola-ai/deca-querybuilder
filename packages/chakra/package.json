@@ -1,0 +1,67 @@
+{
+  "name": "@react-querybuilder/chakra",
+  "description": "Custom Chakra UI components for react-querybuilder",
+  "version": "7.4.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/react-querybuilder_chakra.legacy-esm.js",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": {
+        "types": "./dist/react-querybuilder_chakra.d.mts",
+        "default": "./dist/react-querybuilder_chakra.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/react-querybuilder_chakra.cjs.development.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "types": "./dist/cjs/react-querybuilder_chakra.cjs.production.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/react-querybuilder/react-querybuilder.git",
+    "directory": "packages/chakra"
+  },
+  "license": "MIT",
+  "homepage": "https://react-querybuilder.js.org/",
+  "scripts": {
+    "start": "bunx --bun vite",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "typecheck:watch": "tsc --noEmit --watch"
+  },
+  "devDependencies": {
+    "@chakra-ui/icons": "^2.1.1",
+    "@chakra-ui/react": "^2.8.2",
+    "@chakra-ui/system": "^2.6.2",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@testing-library/react": "^15.0.7",
+    "@types/react": "^18.3.3",
+    "@vitejs/plugin-react-swc": "^3.7.0",
+    "framer-motion": "^11.2.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-querybuilder": "^7.4.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.12"
+  },
+  "peerDependencies": {
+    "@chakra-ui/icons": ">=1.0.0",
+    "@chakra-ui/react": ">=1.6.0",
+    "@chakra-ui/system": ">=1.8.0",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "framer-motion": "^6.3.3",
+    "react": ">=18.1.0",
+    "react-querybuilder": "^7.4.1"
+  }
+}

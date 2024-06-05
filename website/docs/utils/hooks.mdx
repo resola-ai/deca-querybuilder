@@ -1,0 +1,255 @@
+---
+title: Hooks
+description: Reuse React Query Builder's logic in your own components
+---
+
+import { DemoLink } from '@site/src/components/DemoLink';
+
+%importmd ../\_ts_admonition.md
+
+These Hooks are used internally by React Query Builder and are exported for use by custom components.
+
+## State access
+
+React Query Builder uses Redux to manage state within a custom React context to avoid interfering with existing Redux stores.
+
+### `useQueryBuilderSelector`
+
+Returns the current query from the Redux store when used in conjunction with `getQuerySelectorById` (see example below).
+
+```ts
+function useQueryBuilderSelector(selector: (state: RqbState) => RuleGroupTypeAny): RuleGroupTypeAny;
+```
+
+:::tip
+
+As a React Hook, this function must follow the [appropriate rules](https://react.dev/warnings/invalid-hook-call-warning). It is intended to provide access to the current query during the render phase, _not in an event handler_.
+
+**To access the current query from an event handler, use `props.schema.getQuery()` instead.**
+
+:::
+
+Example:
+
+```ts
+const CustomValueEditor = (props: ValueEditorProps) => {
+  const fullQuery = useQueryBuilderSelector(getQuerySelectorById(props.schema.qbId));
+  // Here you can use utilities like `findPath(getParentPath(props.path), fullQuery)`.
+  // This allows you to, for example, inspect the parent group of the current rule.
+  // You can then count sibling rules, check for unique `field` selections, etc.
+  // That information can be used for validation, information to the user, or
+  // anything else in your render function.
+};
+```
+
+## Component logic
+
+The core logic of each component is encapsulated in a reusable Hook. Each main component is itself little more than a call to its respective Hook and the JSX that utilizes the properties in the object returned from that Hook. This enables the creation of a custom presentation layer without having to copy the logic code from the default components.
+
+:::tip
+
+The `@react-querybuilder/native` package is a good example of this concept. It calls the Hooks from its own query builder, rule group, and rule components, but nests the sub-components within React Native `View` elements instead of HTML `div` elements like the `react-querybuilder` components.
+
+:::
+
+### `useRule`
+
+Called by the [`Rule`](../components/rule) component. See [source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/hooks/useRule.ts) for returned properties.
+
+```ts
+function useRule(props: RuleProps): {
+  // See source code for returned properties
+};
+```
+
+### `useRuleGroup`
+
+Called by the [`RuleGroup`](../components/rulegroup) component. See [source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/hooks/useRuleGroup.ts) for returned properties.
+
+```ts
+function useRuleGroup(props: RuleGroupProps): {
+  // See source code for returned properties
+};
+```
+
+### `useValueEditor`
+
+Called by the [`ValueEditor`](../components/valueeditor) component. Accepts the same `ValueEditorProps` as the component and returns an object with two properties: the value as an array and a multi-value handler.
+
+```ts
+function useValueEditor(props: ValueEditorProps): {
+  valueAsArray: any[];
+  multiValueHandler: (val: string, idx: number) => void;
+};
+```
+
+This Hook updates the `value` as a side effect if the following conditions are true:
+
+- `skipHook` is `false` (the value editors in the [compatibility packages](../compat) set this to `true` to avoid infinite loops)
+- `inputType` is `"number"`
+- `operator` is something other than `"between"`, `"notBetween"`, `"in"`, or `"notIn"`
+- `valueEditorType` is not "multiselect"
+- `value` is an array or a string containing a comma (`,`) and at least one non-whitespace character on either side.
+
+If all of these conditions are met, `handleOnChange` will be called with the first element of the array, or any characters before the first comma if `value` is a string.
+
+### `useValueSelector`
+
+Called by the [`ValueSelector`](../components/valueselector) component. Returns the given value as an array (untouched if already an array) and a memoized change handler.
+
+```ts
+function useValueSelector(
+  props: Pick<ValueSelectorProps, 'handleOnChange' | 'listsAsArrays' | 'multiple' | 'value'>
+): {
+  onChange: (v: string | string[]) => void;
+  val?: string | any[];
+};
+```
+
+### `useSelectElementChangeHandler`
+
+Used by the [`ValueSelector`](../components/valueselector) component. Returns a memoized change handler specifically for HTML `<select />` elements.
+
+```ts
+function useSelectElementChangeHandler(props: {
+  multiple?: boolean;
+  onChange: (v: string | string[]) => void;
+}): (e: ChangeEvent<HTMLSelectElement>) => void;
+```
+
+### `useShiftActions`
+
+Used by the [`ShiftActions`](../components/shiftactions) component. Generates `shiftUp` and `shiftDown` methods to move a rule/group up or down, respectively, in the query hierarchy, as well as `shiftUpDisabled`/`shiftDownDisabled` to indicate whether either button should be disabled (`shiftUpDisabled` is `true` for the first rule/group in the root group; `shiftDownDisabled` is `true` for the last rule/group in the root group).
+
+```ts
+function useShiftActions(
+  props: { path: Path } & Pick<Schema, 'combinators' | 'dispatchQuery' | 'getQuery'>
+): {
+  shiftDown: () => void;
+  shiftDownDisabled: boolean;
+  shiftUp: () => void;
+  shiftUpDisabled: boolean;
+};
+```
+
+### `useStopEventPropagation`
+
+Used by the default [`Rule`](../components/rule) and [`RuleGroup`](../components/rulegroup) components to prevent default behavior and stop propagation of events (e.g., a `MouseEvent` after clicking a `<button>`). Takes a function that accepts a `MouseEvent` and context parameters; returns a new function that calls `event.preventDefault()` and `event.stopPropagation()` before calling the original function with the same arguments.
+
+```ts
+function useStopEventPropagation(
+  method: (event: React.MouseEvent, context: any) => void
+): (event: React.MouseEvent, context: any) => void;
+```
+
+This hook is _not_ used in the `@react-querybuilder/native` `Rule` and `RuleGroup` components, `RuleNative` and `RuleGroupNative`.
+
+### `useQueryBuilderSetup`
+
+Called by the [`QueryBuilder`](../components/querybuilder) component. Merges props and context values with the defaults and generates actions.
+
+:::info
+
+This Hook is unlikely to be necessary unless you are reimplementing the entire `QueryBuilder` component structure.
+
+:::
+
+```ts
+function useQueryBuilderSetup(props: QueryBuilderProps): {
+  qbId: qbId.current;
+  rqbContext: ReturnType<typeof useMergedContext>;
+  fields: OptionList<Field>;
+  fieldMap: Record<string, Field>;
+  combinators: OptionList<Combinator>;
+  getOperatorsMain: (field: string) => OptionList<Operator>;
+  getRuleDefaultOperator: (field: string) => string;
+  getValueEditorTypeMain: (field: string, operator: string) => ValueEditorType;
+  getValueSourcesMain: (field: string, operator: string) => ValueSources;
+  getValuesMain: (field: string, operator: string) => OptionList;
+  getRuleDefaultValue: (rule: RuleType) => any;
+  getInputTypeMain: (field: string, operator: string) => string;
+  createRule: () => RuleType;
+  createRuleGroup: () => RuleGroupTypeAny;
+};
+```
+
+### `useQueryBuilderSchema`
+
+Called by the internal component rendered by [`QueryBuilder`](../components/querybuilder). Returns everything needed to render a wrapper element (e.g., `<div>`) and the root [`RuleGroup`](../components/rulegroup) element based on the provided props and the result from [`useQueryBuilderSetup`](#usequerybuildersetup). Generates an `id` for each rule and group in the query hierarchy that doesn't already have one.
+
+This Hook must be called from a descendant component of `QueryBuilderStateProvider`. See [`QueryBuilder` source code](https://github.com/react-querybuilder/react-querybuilder/blob/main/packages/react-querybuilder/src/components/QueryBuilder.tsx) for an example.
+
+:::info
+
+This Hook is unlikely to be necessary unless you are reimplementing the entire `QueryBuilder` component structure.
+
+:::
+
+```ts
+function useQueryBuilderSchema(
+  props: QueryBuilderProps,
+  setup: ReturnType<typeof useQueryBuilderSetup>
+): QueryBuilderProps & {
+  actions: QueryActions;
+  rootGroup: RuleGroupTypeAny;
+  rootGroupDisabled: RuleGroupTypeAny;
+  queryDisabled: boolean;
+  rqbContext: ReturnType<typeof useMergedContext>;
+  schema: Schema;
+  translations: TranslationsFull;
+  wrapperClassName: string;
+  dndEnabledAttr: 'enabled' | 'disabled';
+  inlineCombinatorsAttr: 'enabled' | 'disabled';
+  combinatorPropObject: Pick<RuleGroupProps, 'combinator'>;
+};
+```
+
+## Other utilities
+
+### `useMergedContext`
+
+Merges the values inherited from the nearest ancestor `QueryBuilderContext.Provider` with the current component's props. For `controlClassnames`, `controlElements`, and `translations`, options that are not defined through either context or props will fall back to the defaults.
+
+```ts
+function useMergedContext(props: QueryBuilderContextProps): QueryBuilderContextProps;
+```
+
+### `usePreferProp`
+
+Given a default value, a prop value, and a context value (all `boolean` or `undefined`), returns the first one that is not `undefined` in the order of (1) prop, (2) context, (3) default.
+
+```ts
+function usePreferProp(default: boolean, prop?: boolean, context?: boolean): boolean;
+```
+
+### `usePrevious`
+
+Returns the value of a prop or state variable from the previous render.
+
+```ts
+function usePrevious<T>(prop: T): T | null;
+```
+
+## Internal
+
+These Hooks log error messages to the console in certain situations (and only in "development" mode). They encourage correct usage of React Query Builder and are not intended to be used in custom components.
+
+### `useControlledOrUncontrolled`
+
+Logs an error to the console if any of the following are true:
+
+- Both `query` and `defaultQuery` props are defined.
+- The `query` prop is defined during one render and undefined in a subsequent render.
+- The `query` prop is undefined during one render and defined in a subsequent render.
+
+### `useDeprecatedProps`
+
+Logs an error to the console if any of the following are true:
+
+- `QueryBuilder` is rendered with `independentCombinators` prop (see [Independent combinators](../components/querybuilder#independent-combinators))
+- `RuleGroup` is rendered with `combinator` or `rules` props (deprecated in favor of `ruleGroup`)
+- `Rule` is rendered with `field`, `operator`, or `value` props (deprecated in favor of `rule`)
+
+### `useReactDndWarning`
+
+Logs an error to the console if the `enableDragAndDrop` prop is `true` but the `react-dnd` and `react-dnd-html5-backend` dependencies are not loaded.

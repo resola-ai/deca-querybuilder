@@ -1,0 +1,25 @@
+name: Prettier
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  Prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: oven-sh/setup-bun@v1
+      - uses: bahmutov/npm-install@v1
+        with:
+          install-command: yarn --immutable
+      - name: Check prettification
+        run: |
+          bun run pretty-check || \
+          (bun run pretty-print --loglevel=silent \
+          && git --no-pager diff \
+          && exit 1)

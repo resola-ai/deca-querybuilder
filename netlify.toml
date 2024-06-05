@@ -1,0 +1,19 @@
+[build]
+command = "bun run build:rqb:main && cp packages/react-querybuilder/src/*.scss packages/react-querybuilder/dist && bun run build:compat && bun website:build"
+publish = "website/build"
+
+[context.production.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
+
+[context.deploy-preview.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
+
+[context.branch-deploy.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"
+
+[context.dev.environment]
+NODE_VERSION = "20.10.0"
+NODE_OPTIONS = "--max-old-space-size=4096"

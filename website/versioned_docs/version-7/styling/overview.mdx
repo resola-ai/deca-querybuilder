@@ -1,0 +1,99 @@
+---
+title: Styling overview
+description: How to tweak or overhaul the default styles
+---
+
+import { BrowserWindow } from '@site/src/components/BrowserWindow';
+import { DemoLink } from '@site/src/components/DemoLink';
+import { QueryBuilderEmbed } from '@site/src/components/QueryBuilderEmbed';
+
+React Query Builder has a [flexible structure with specific classes assigned](./classnames) to each element in the component hierarchy, enabling a wide range of styling possibilities.
+
+:::tip
+
+Check out the [customization showcase](../tips/showcase) for a wide variety of styling tips.
+
+:::
+
+The default stylesheet comes in CSS and SCSS flavors. Using SCSS allows you to override variables and tweak styles without having to replicate the entire rule set.
+
+```ts
+import 'react-querybuilder/dist/query-builder.scss'; // recommended
+// OR
+import 'react-querybuilder/dist/query-builder.css';
+```
+
+## Layout only
+
+To load the default layout values only, without `background-color`, `border-style`, or other decorative styles, import `"react-querybuilder/dist/query-builder-layout.scss"` (or `css`) instead. This will define `flex-direction`, `gap`, alignment, etc.
+
+```ts
+import 'react-querybuilder/dist/query-builder-layout.scss'; // recommended
+// OR
+import 'react-querybuilder/dist/query-builder-layout.css';
+```
+
+## SCSS variables
+
+The default SCSS variables for layout include:
+
+%importcode /packages/react-querybuilder/src/query-builder-layout.scss#region=Basic
+
+And the variables for decorative styles are:
+
+%importcode /packages/react-querybuilder/src/query-builder.scss#region=Basic
+
+## Branch lines
+
+To add branch lines to the left side of rule groups, add the `queryBuilder-branches` class to the query builder using the [`controlClassnames` prop](../components/querybuilder#controlclassnames), or to any ancestor element.
+
+```tsx
+<QueryBuilder
+  // highlight-start
+  controlClassnames={{ queryBuilder: 'queryBuilder-branches' }}
+  // highlight-end
+/>
+```
+
+export const fields = [
+  { name: 'firstName', label: 'First name' },
+  { name: 'lastName', label: 'Last name' },
+];
+
+<BrowserWindow>
+  <QueryBuilderEmbed
+    fields={fields}
+    controlClassnames={{ queryBuilder: ['queryBuilder-branches', 'red-branch-lines'] }}
+    defaultQuery={{
+      combinator: 'and',
+      rules: [
+        { field: 'firstName', operator: 'beginsWith', value: 'Stev' },
+        {
+          combinator: 'or',
+          rules: [
+            { field: 'lastName', operator: '=', value: 'Vai' },
+            { field: 'lastName', operator: '=', value: 'Vaughan' },
+          ],
+        },
+      ],
+    }}
+  />
+</BrowserWindow>
+
+The branch lines are colored <span style={{ color: 'red' }}>red</span> in the example above to stand out, but by default the branch lines use the same color, width, and style as the group borders. The following SCSS variables can be overridden to customize the branch lines.
+
+%importcode /packages/react-querybuilder/src/query-builder-layout.scss#region=Branches
+
+%importcode /packages/react-querybuilder/src/query-builder.scss#region=Branches
+
+## Drag-and-drop
+
+When [drag-and-drop is enabled](../components/querybuilder#enabledraganddrop), the following variables control styles for the dragged and hovered elements.
+
+%importcode /packages/react-querybuilder/src/query-builder.scss#region=Drag-and-drop
+
+You can also assign styles to the following classes.
+
+- `dndDragging`: Assigned to the clone of the dragged element (the "ghost" that follows the mouse cursor)
+- `dndOver`: Assigned to a drop target when the cursor hovers over it
+- `dndCopy`: Assigned to a drop target when the cursor hovers over it while the modifier key is pressed (`Alt` on Windows/Linux, `Option`/`⌥` on Mac)

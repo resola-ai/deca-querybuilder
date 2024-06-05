@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <!-- ROW 1 LEFT -->
+  <path fill="#94D2F2" stroke="#94D2F2" stroke-width="4" d="M2 2h212v36H2z"/>
+  <!-- ROW 1 RIGHT -->
+  <path fill="none" stroke="#94D2F2" stroke-width="4" d="M212 2h42v36h-42z"/>
+  <!-- ROW 2 LEFT -->
+  <path fill="#94D2F2" stroke="#94D2F2" stroke-width="4" d="M2 60h172v32H2z"/>
+  <!-- ROW 2 RIGHT -->
+  <path fill="#5BDC61" stroke="#5BDC61" stroke-width="4" d="M172 60h82v32h-82z"/>
+  <!-- ROW 3 LEFT -->
+  <path fill="#94D2F2" stroke="#94D2F2" stroke-width="4" d="M2 114h126v32H2z"/>
+  <!-- ROW 3 RIGHT -->
+  <path fill="none" stroke="#94D2F2" stroke-width="4" d="M124 114h130v32H124z"/>
+  <!-- ROW 4 LEFT -->
+  <path fill="#94D2F2" stroke="#94D2F2" stroke-width="4" d="M2 168h80v32H2z"/>
+  <!-- ROW 4 RIGHT -->
+  <path fill="#5BDC61" stroke="#5BDC61" stroke-width="4" d="M80 168h174v32H80z"/>
+  <!-- ROW 5 LEFT -->
+  <path fill="#94D2F2" stroke="#94D2F2" stroke-width="4" d="M2 222h38v32H2z"/>
+  <!-- ROW 5 RIGHT -->
+  <path fill="none" stroke="#94D2F2" stroke-width="4" d="M37 222h217v32H37z"/>
+  <!-- CROSS -->
+  <path fill="#276A8C" d="M200 0h56L56 256H0z"/>
+</svg>
