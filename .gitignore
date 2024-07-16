@@ -3,7 +3,7 @@ node_modules/
 
 # Generated files
 build/
-dist/
+# dist/
 coverage/
 build-analysis.*
 
