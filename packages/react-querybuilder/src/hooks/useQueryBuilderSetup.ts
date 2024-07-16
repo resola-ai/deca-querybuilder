@@ -97,6 +97,8 @@ export const useQueryBuilderSetup = <
 
   const operators = (operatorsProp ?? defaultOperators) as FlexibleOptionList<O>;
 
+  const [initialQueryProp] = useState(props.query ?? props.defaultQuery);
+
   const rqbContext = useMergedContext({
     controlClassnames: controlClassnamesProp,
     controlElements: controlElementsProp,
@@ -104,6 +106,9 @@ export const useQueryBuilderSetup = <
     enableDragAndDrop: enableDragAndDropProp,
     enableMountQueryChange: enableMountQueryChangeProp,
     translations: translationsProp,
+    initialQuery: initialQueryProp,
+    qbId: qbId,
+    finalize: true,
   });
 
   const { translations } = rqbContext;
@@ -128,8 +133,8 @@ export const useQueryBuilderSetup = <
     const flds = (
       Array.isArray(fieldsProp)
         ? toFullOptionList(fieldsProp, baseField)
-        : objectKeys(toFullOptionMap(fieldsProp, baseField))
-            .map(fld => ({ ...fieldsProp[fld as unknown as FieldName], name: fld, value: fld }))
+        : (objectKeys(toFullOptionMap(fieldsProp, baseField)) as unknown as FieldName[])
+            .map(fld => ({ ...fieldsProp[fld], name: fld, value: fld }))
             .sort((a, b) => a.label.localeCompare(b.label))
     ) as FullOptionList<F>;
     if (isFlexibleOptionGroupArray(flds)) {
@@ -322,7 +327,7 @@ export const useQueryBuilderSetup = <
         return getDefaultValue(r, { fieldData });
       }
 
-      let value: string | string[] | boolean = '';
+      let value: string | (string | null)[] | boolean | null = '';
 
       const values = getValuesMain(r.field as FieldName, r.operator as OperatorName, {
         fieldData,

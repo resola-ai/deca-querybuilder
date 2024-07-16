@@ -1,13 +1,10 @@
 import { act, render, screen } from '@testing-library/react';
 import * as React from 'react';
-import * as reactDnDHTML5Backend from 'react-dnd-html5-backend/dist/index.js';
-import {
-  simulateDragDrop,
-  simulateDragHover,
-  wrapWithTestBackend,
-} from 'react-dnd-test-utils/dist/index.js';
-import * as reactDnD from 'react-dnd/dist/index.js';
+import * as reactDnDHTML5Backend from 'react-dnd-html5-backend';
+import { simulateDragDrop, simulateDragHover, wrapWithTestBackend } from 'react-dnd-test-utils';
+import * as reactDnD from 'react-dnd';
 import type {
+  Field,
   FullCombinator,
   FullField,
   FullOperator,
@@ -21,7 +18,7 @@ import {
   getCompatContextProvider,
   standardClassnames,
 } from 'react-querybuilder';
-import { consoleMocks } from 'react-querybuilder/genericTests/index';
+import { consoleMocks } from '@rqb-testing';
 import { QueryBuilderDnD, QueryBuilderDndWithoutProvider } from './QueryBuilderDnD';
 
 const getHandlerId = (el: HTMLElement, dragDrop: 'drag' | 'drop') => () =>
@@ -47,7 +44,6 @@ it('acts as a pass-through for context', async () => {
     <button className={combinatorSelectorClass}>{combinatorSelectorText}</button>
   );
   const TestCompatContextProvider = getCompatContextProvider({
-    key: 'test',
     controlElements: { combinatorSelector },
   });
   await act(async () => {
@@ -81,7 +77,7 @@ it('renders with dnd provider without dnd prop', async () => {
   await act(async () => {
     render(
       <QueryBuilderDnD>
-        <QueryBuilder enableDragAndDrop />
+        <QueryBuilder />
       </QueryBuilderDnD>
     );
   });
@@ -93,7 +89,7 @@ it('renders without dnd provider without dnd prop', async () => {
   await act(async () => {
     render(
       <QBWoDndProvider>
-        <QueryBuilder enableDragAndDrop />
+        <QueryBuilder />
       </QBWoDndProvider>
     );
   });
@@ -134,7 +130,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               combinator: 'and',
               rules: [
@@ -159,7 +154,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnD
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               combinator: 'and',
               rules: [
@@ -203,7 +197,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -236,7 +229,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -270,7 +262,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -307,7 +298,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -345,7 +335,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -383,7 +372,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -425,7 +413,6 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
         render(
           <QBforDnDIC
             onQueryChange={onQueryChange}
-            enableDragAndDrop
             query={{
               rules: [
                 { field: 'field0', operator: '=', value: '0' },
@@ -445,8 +432,7 @@ describe.each([{ QBctx: QueryBuilderDnD }, { QBctx: QueryBuilderDndWithoutProvid
             }}
           />
         );
-        const dragRule = screen.getAllByTestId(TestID.rule)[1];
-        const dropRule = screen.getAllByTestId(TestID.rule)[3];
+        const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
         simulateDragDrop(
           getHandlerId(dragRule, 'drag'),
           getHandlerId(dropRule, 'drop'),
@@ -488,7 +474,6 @@ it('does not pass dnd classes down to nested rules and groups', async () => {
   render(
     <QueryBuilderWrapped
       fields={[{ name: 'field1', label: 'Field 1' }]}
-      enableDragAndDrop
       query={{
         combinator: 'and',
         rules: [
@@ -548,7 +533,6 @@ it('prevents changes when disabled', async () => {
       ]}
       enableMountQueryChange={false}
       onQueryChange={onQueryChange}
-      enableDragAndDrop
       disabled
       query={{
         rules: [
@@ -569,8 +553,7 @@ it('prevents changes when disabled', async () => {
       }}
     />
   );
-  const dragRule = screen.getAllByTestId(TestID.rule)[1];
-  const dropRule = screen.getAllByTestId(TestID.rule)[3];
+  const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
   expect(() =>
     simulateDragDrop(
       getHandlerId(dragRule, 'drag'),
@@ -579,4 +562,110 @@ it('prevents changes when disabled', async () => {
     )
   ).toThrow();
   expect(onQueryChange).not.toHaveBeenCalled();
+});
+
+it('respects onMoveRule', async () => {
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupTypeIC, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QueryBuilder {...props} />
+      </QueryBuilderDnD>
+    )
+  );
+  const onQueryChange = jest.fn<never, [RuleGroupTypeIC]>();
+  render(
+    <QueryBuilderWrapped
+      fields={[
+        { name: 'field0', label: 'Field 0' },
+        { name: 'field1', label: 'Field 1' },
+        { name: 'field2', label: 'Field 2' },
+        { name: 'field3', label: 'Field 3' },
+        { name: 'field4', label: 'Field 4' },
+      ]}
+      enableMountQueryChange={false}
+      onQueryChange={onQueryChange}
+      onMoveRule={() => false}
+      query={{
+        rules: [
+          { field: 'field0', operator: '=', value: '0' },
+          'and',
+          { field: 'field1', operator: '=', value: '1' },
+          'and',
+          { field: 'field2', operator: '=', value: '2' },
+          'and',
+          {
+            rules: [
+              { field: 'field3', operator: '=', value: '3' },
+              'and',
+              { field: 'field4', operator: '=', value: '4' },
+            ],
+          },
+        ],
+      }}
+    />
+  );
+  const [, dragRule, , dropRule] = screen.getAllByTestId(TestID.rule);
+  simulateDragDrop(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropRule, 'drop'),
+    getDndBackend()!
+  );
+  expect(onQueryChange).not.toHaveBeenCalled();
+});
+
+it('can move rules/groups to different query builders', async () => {
+  const onQueryChange = jest.fn<never, [RuleGroupType]>();
+  const fields: Field[] = [
+    { name: 'field1', label: 'Field 1' },
+    { name: 'field2', label: 'Field 2' },
+    { name: 'field3', label: 'Field 3' },
+    { name: 'field4', label: 'Field 4' },
+  ];
+  const query1: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'field1', operator: '=', value: '1' },
+      { field: 'field2', operator: '=', value: '2' },
+    ],
+  };
+  const query2: RuleGroupType = {
+    combinator: 'and',
+    rules: [
+      { field: 'field3', operator: '=', value: '3' },
+      { field: 'field4', operator: '=', value: '4' },
+    ],
+  };
+  const [QueryBuilderWrapped, getDndBackend] = wrapWithTestBackend(
+    (props: QueryBuilderProps<RuleGroupType, FullField, FullOperator, FullCombinator>) => (
+      <QueryBuilderDnD dnd={{ ...reactDnD, ...reactDnDHTML5Backend }}>
+        <QueryBuilder {...props} query={query1} />
+        <QueryBuilder {...props} query={query2} />
+      </QueryBuilderDnD>
+    )
+  );
+  render(<QueryBuilderWrapped fields={fields} enableDragAndDrop onQueryChange={onQueryChange} />);
+  const [dropRule, , , dragRule] = screen.getAllByTestId(TestID.rule);
+  simulateDragDrop(
+    getHandlerId(dragRule, 'drag'),
+    getHandlerId(dropRule, 'drop'),
+    getDndBackend()!
+  );
+  expect(onQueryChange).toHaveBeenCalledWith(
+    expect.objectContaining({
+      combinator: 'and',
+      rules: expect.arrayContaining([
+        expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
+        expect.objectContaining({ field: 'field4', operator: '=', value: '4' }),
+        expect.objectContaining({ field: 'field2', operator: '=', value: '2' }),
+      ]),
+    })
+  );
+  expect(onQueryChange).toHaveBeenCalledWith(
+    expect.objectContaining({
+      combinator: 'and',
+      rules: expect.arrayContaining([
+        expect.objectContaining({ field: 'field1', operator: '=', value: '1' }),
+      ]),
+    })
+  );
 });

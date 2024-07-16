@@ -9,7 +9,7 @@ import { DemoLink } from '@site/src/components/DemoLink';
 
 The primary export of `react-querybuilder` is the `<QueryBuilder />` React component.
 
-`QueryBuilder` calls the [`useQueryBuilderSetup`](../utils/hooks#usequerybuildersetup) Hook to merge props and context values with defaults, generate update methods, etc. It then renders a context provider over an internal component that calls the [`useQueryBuilderSchema`](../utils/hooks#usequerybuilderschema) Hook to consume the context, prepare the query, and finalize the schema.
+`QueryBuilder` calls the [`useQueryBuilder`](../utils/hooks#usequerybuilder) Hook to merge props and context values with defaults, generate update methods, consume the context, prepare the query, and finalize the schema.
 
 ## Subcomponents
 
@@ -367,12 +367,11 @@ Selects the `field` property for the current rule. Default is [`ValueSelector`](
 
 #### `inlineCombinator`
 
-A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Receives the following props per the `InlineCombinatorProps` interface (which extends `CombinatorSelectorProps`):
+A small wrapper around the [`combinatorSelector`](#combinatorselector) component. Default is [`InlineCombinator`](./inlinecombinator). Receives the following props per the `InlineCombinatorProps` interface, which extends `CombinatorSelectorProps`:
 
-| Prop                     | Type                                       | Description                                                                    |
-| ------------------------ | ------------------------------------------ | ------------------------------------------------------------------------------ |
-| `component`              | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component                                     |
-| `independentCombinators` | `boolean`                                  | Whether the query is using [independent combinators](#independent-combinators) |
+| Prop        | Type                                       | Description                                |
+| ----------- | ------------------------------------------ | ------------------------------------------ |
+| `component` | `Schema['controls']['combinatorSelector']` | Same as the `combinatorSelector` component |
 
 #### `lockGroupAction`
 
@@ -748,6 +747,46 @@ To completely [prevent the addition of new groups](../tips/limit-groups), pass `
 
 :::
 
+### `onMoveRule`
+
+```
+<RG extends RuleGroupTypeAny>(
+  rule: RuleType,
+  fromPath: Path,
+  toPath: Path | 'up' | 'down',
+  query: RG,
+  nextQuery: RG,
+  options: MoveOptions,
+  context?: any
+) => RG | boolean;
+```
+
+This callback is invoked immediately before a rule is moved or shifted. The function should return one of three things:
+
+1. `true` to allow the move/shift to proceed as normal.
+2. `false` to cancel the move/shift.
+3. A new query object (presumably based on the `query` or `nextQuery` parameters passed to it).
+
+### `onMoveGroup`
+
+```
+<RG extends RuleGroupTypeAny>(
+  ruleGroup: RG,
+  fromPath: Path,
+  toPath: Path | 'up' | 'down',
+  query: RG,
+  nextQuery: RG,
+  options: MoveOptions,
+  context?: any
+) => RG | boolean;
+```
+
+This callback is invoked immediately before a group is moved or shifted. The function should return one of three things:
+
+1. `true` to allow the move/shift to proceed as normal.
+2. `false` to cancel the move/shift.
+3. A new query object (presumably based on the `query` or `nextQuery` parameters passed to it).
+
 ### `onRemove`
 
 `<RG extends RuleGroupTypeAny>(ruleOrGroup: RG | RuleType, path: Path, query: RG, context?: any) => boolean`
@@ -947,7 +986,7 @@ This function is executed each time `QueryBuilder` renders. The return value sho
 
 ## Independent combinators
 
-The props listed above that specify `RuleGroupTypeAny` will actually be inferred as one of the more specific types, `RuleGroupType` or `RuleGroupTypeIC`. When a query is of type `RuleGroupTypeIC`, we say that it is using "independent combinators."
+The props listed above that specify `RuleGroupTypeAny` will actually be inferred as one of the more specific types, [`RuleGroupType` or `RuleGroupTypeIC`](../typescript#rules-and-groups). When a query is of type `RuleGroupTypeIC`, we say that it is using "independent combinators."
 
 What this means is that a combinator value is defined between each neighboring pair of rules/groups in a group's `rules` array (every odd-numbered index). Visually, this has a similar effect to the [`showCombinatorsBetweenRules`](#showcombinatorsbetweenrules) option, except that each combinator is _independently_ controlled by its own selector. You may find that users take to this configuration more easily as it can allow them to express queries more like they would in natural language.
 

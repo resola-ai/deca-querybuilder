@@ -9,6 +9,77 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 N/A
 
+## [v7.6.0] - 2024-07-11
+
+### Added
+
+- [#734] New callback props `onMoveRule` and `onMoveGroup`, called before a rule or group is moved (via drag-and-drop) or shifted. If the result of the callback is `false`, the move will be cancelled. If `true`, the move will proceed as normal. Alternatively, a full query object can be returned representing the new state if some other modifications were necessary.
+- [#734] `onAddRule` and `onAddGroup` callbacks can now return `true` instead of the entire rule/group to allow the addition to proceed as normal.
+
+### Fixed
+
+- [#733] `parseSPeL` was not handling the `matches` operator correctly when its value was a single character.
+- [#733] Improved `formatQuery` "elasticsearch" output for "contains" and "doesNotContain" operators.
+
+## [v7.5.2] - 2024-06-27
+
+### Fixed
+
+- [#730] `parseMongoDB` was not handling the `$regex` operator correctly when its value was a single character.
+
+## [v7.5.1] - 2024-06-25
+
+### Changed
+
+- [#727] `useMergedContext` no longer returns values that are not explicitly typed in `UseMergedContextProps`.
+- [#727] `key` is no longer required in the parameter passed to `getCompatContextProvider`.
+
+### Fixed
+
+- [#727] Overall memoization strategy and implementation is improved.
+- [#727] Option group utility functions are better at identifying what is and isn't an option group list.
+- [#727] The `dragging` property of the object passed to `canDrop` is no longer a stale reference to the rule/group being dragged.
+
+## [v7.5.0] - 2024-06-15
+
+### Changed
+
+- [#716] The React Native compatibility package uses `gap` for layout spacing, which means the minimum `react-native` version is now `0.71.0`.
+
+### Added
+
+- [#723] The `useQueryBuilder` hook has been reinstated. It does nothing more than call `useQueryBuilderSetup` and `useQueryBuilderSchema`, which no longer need to be called from separate components.
+- [#723] `useQueryBuilderQuery` hook to retrieve the full, current query object during the render pass of a custom component. It requires no parameters and should be used in place of the previously recommended hook `useQueryBuilderSelector`, which requires a selector function generated with `getQuerySelectorById(props.schema.qbId)`. While `useQueryBuilderSelector` is not deprecated, it is no longer recommended except in very special circumstances.
+
+### Fixed
+
+- [#723] `useQueryBuilderSelector` no longer returns `undefined` during the first render pass (and neither does the new hook `useQueryBuilderQuery`).
+- [#716] `parse*` methods properly escape commas in string values for "between" and "in" operators.
+
+## [v7.4.4] - 2024-06-10
+
+### Fixed
+
+- [#719] The "mongodb" export format stringifies values using `JSON.stringify`.
+
+## [v7.4.3] - 2024-06-06
+
+### Fixed
+
+- Compatibility packages now specify the correct `react-querybuilder` dependency version.
+
+## [v7.4.2] - 2024-06-06
+
+### Added
+
+- [#713] `insert` utility method to insert a new rule or group anywhere in the query hierarchy. `insert` is similar to `add` except that the new rule or group can be inserted at any path (`add` can only append a rule or group to the end of a group's `rules` array). The option `replace: true` will replace the rule or group at the specified path.
+
+### Fixed
+
+- [#713] `@react-querybuilder/dnd` now supports dragging and dropping rules and groups across separate query builders. As with drag-and-drop within a single query builder, holding the modifier key (`Alt` on Windows/Linux, `Option`/`⌥` on Mac) when dropping the rule/group will copy it instead of move it.
+- [#713] `debugMode` now logs the query builder's `qbId`.
+- [#714] `parseJsonLogic` can now override group operations ("and", "or", "!", and "!!") with the `jsonLogicOperations` option.
+
 ## [v7.4.1] - 2024-06-04
 
 ### Fixed
@@ -1479,7 +1550,7 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 
 - Initial publish
 
-<!-- Issue and Pull Request links -->
+<!-- #region Issue and Pull Request links -->
 
 [#1]: https://github.com/react-querybuilder/react-querybuilder/pull/1
 [#6]: https://github.com/react-querybuilder/react-querybuilder/pull/6
@@ -1646,10 +1717,28 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#700]: https://github.com/react-querybuilder/react-querybuilder/pull/700
 [#703]: https://github.com/react-querybuilder/react-querybuilder/pull/703
 [#706]: https://github.com/react-querybuilder/react-querybuilder/pull/706
+[#713]: https://github.com/react-querybuilder/react-querybuilder/pull/713
+[#714]: https://github.com/react-querybuilder/react-querybuilder/pull/714
+[#716]: https://github.com/react-querybuilder/react-querybuilder/pull/716
+[#719]: https://github.com/react-querybuilder/react-querybuilder/issues/719
+[#723]: https://github.com/react-querybuilder/react-querybuilder/pull/723
+[#727]: https://github.com/react-querybuilder/react-querybuilder/pull/727
+[#730]: https://github.com/react-querybuilder/react-querybuilder/pull/730
+[#733]: https://github.com/react-querybuilder/react-querybuilder/pull/733
+[#734]: https://github.com/react-querybuilder/react-querybuilder/pull/734
 
-<!-- Release comparison links -->
+<!-- #endregion -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...HEAD
+<!-- #region Release comparison links -->
+
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.0...HEAD
+[v7.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.2...v7.6.0
+[v7.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.1...v7.5.2
+[v7.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.0...v7.5.1
+[v7.5.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.4...v7.5.0
+[v7.4.4]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.3...v7.4.4
+[v7.4.3]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.2...v7.4.3
+[v7.4.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.1...v7.4.2
 [v7.4.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.4.0...v7.4.1
 [v7.4.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.3.0...v7.4.0
 [v7.3.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.2.1...v7.3.0
@@ -1785,3 +1874,5 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [v1.0.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.1...v1.0.2
 [v1.0.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v1.0.0...v1.0.1
 [v1.0.0]: https://github.com/react-querybuilder/react-querybuilder/releases/tag/v1.0.0
+
+<!-- #endregion -->

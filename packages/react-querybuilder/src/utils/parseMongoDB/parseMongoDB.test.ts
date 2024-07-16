@@ -102,6 +102,7 @@ describe('valueSource: "value"', () => {
           { f1: { $regex: '^Test' } },
           { f1: { $regex: 'Test$' } },
           { f1: { $regex: 'Test' } },
+          { f1: { $regex: 'T' } },
           { f1: { $regex: /^Test/ } },
           { f1: { $regex: /Test$/ } },
           { f1: { $regex: /Test/ } },
@@ -119,6 +120,7 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'beginsWith', value: 'Test' },
         { field: 'f1', operator: 'endsWith', value: 'Test' },
         { field: 'f1', operator: 'contains', value: 'Test' },
+        { field: 'f1', operator: 'contains', value: 'T' },
         { field: 'f1', operator: 'beginsWith', value: 'Test' },
         { field: 'f1', operator: 'endsWith', value: 'Test' },
         { field: 'f1', operator: 'contains', value: 'Test' },
@@ -137,6 +139,7 @@ describe('valueSource: "value"', () => {
       parseMongoDB({
         $or: [
           { $and: [{ f1: { $gte: 'Test' } }, { f1: { $lte: 'Test2' } }] },
+          { $and: [{ f1: { $gte: 'Test,Comma' } }, { f1: { $lte: 'Test2' } }] },
           { $and: [{ f1: { $gte: 12 } }, { f1: { $lte: 14 } }] },
           { $and: [{ f1: { $lte: 14 } }, { f1: { $gte: 12 } }] },
           { $and: [{ f1: { $gte: false } }, { f1: { $lte: true } }] },
@@ -153,6 +156,7 @@ describe('valueSource: "value"', () => {
           { $not: { f1: { $gte: 12, $lte: 14 } } },
           { $not: { f1: { $gte: false, $lte: true } } },
           { f1: { $in: ['Test', 'Test2'] } },
+          { f1: { $in: ['Te,st', 'Test2'] } },
           { f1: { $in: [12, 14] } },
           { f1: { $in: [true, false] } },
           { f1: { $nin: ['Test', 'Test2'] } },
@@ -165,6 +169,7 @@ describe('valueSource: "value"', () => {
       combinator: 'or',
       rules: [
         { field: 'f1', operator: 'between', value: 'Test,Test2' },
+        { field: 'f1', operator: 'between', value: 'Test\\,Comma,Test2' },
         { field: 'f1', operator: 'between', value: '12,14' },
         { field: 'f1', operator: 'between', value: '12,14' },
         { field: 'f1', operator: 'between', value: 'false,true' },
@@ -193,6 +198,7 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'notBetween', value: '12,14' },
         { field: 'f1', operator: 'notBetween', value: 'false,true' },
         { field: 'f1', operator: 'in', value: 'Test,Test2' },
+        { field: 'f1', operator: 'in', value: 'Te\\,st,Test2' },
         { field: 'f1', operator: 'in', value: '12,14' },
         { field: 'f1', operator: 'in', value: 'true,false' },
         { field: 'f1', operator: 'notIn', value: 'Test,Test2' },

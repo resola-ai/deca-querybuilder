@@ -347,6 +347,36 @@
         "code",
         "test"
       ]
+    },
+    {
+      "login": "stil",
+      "name": "stil",
+      "avatar_url": "https://avatars.githubusercontent.com/u/714004?v=4",
+      "profile": "https://github.com/stil",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "weiliddat",
+      "name": "Chiawei Ong",
+      "avatar_url": "https://avatars.githubusercontent.com/u/899658?v=4",
+      "profile": "https://github.com/weiliddat",
+      "contributions": [
+        "code",
+        "test"
+      ]
+    },
+    {
+      "login": "flieks",
+      "name": "De Lille Felix",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5032389?v=4",
+      "profile": "http://www.appbuilders.be",
+      "contributions": [
+        "code",
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7,

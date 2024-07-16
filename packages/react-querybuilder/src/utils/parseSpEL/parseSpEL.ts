@@ -11,6 +11,7 @@ import type {
   ParseSpELOptions,
   ValueSource,
 } from '../../types/index.noReact';
+import { joinWith } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { fieldIsValidUtil, getFieldsArray } from '../parserUtils';
 import type { SpELExpressionNode, SpELProcessedExpression } from './types';
@@ -177,7 +178,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
         }
       }
 
-      if (/^[^^].*[^$]$/.test(regex)) {
+      if (/^(?!\^).*?(?<!\$)$/.test(regex)) {
         // istanbul ignore else
         if (fieldIsValid(field, 'contains')) {
           return {
@@ -188,7 +189,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           };
         }
       } else {
-        if (/^\^.*[^$]/.test(regex)) {
+        if (/^\^.*?(?<!\$)$/.test(regex)) {
           // istanbul ignore else
           if (fieldIsValid(field, 'beginsWith')) {
             return {
@@ -199,7 +200,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
           }
         } else {
           // istanbul ignore else
-          if (/[^^].*\$/.test(regex)) {
+          if (/^(?!\^).*?\$$/.test(regex)) {
             // istanbul ignore else
             if (fieldIsValid(field, 'endsWith')) {
               return {
@@ -235,7 +236,7 @@ function parseSpEL(spel: string, options: ParseSpELOptions = {}): DefaultRuleGro
       ) {
         const valueArray =
           values[0] < values[1] || valueSource === 'field' ? values : [values[1], values[0]];
-        const value = listsAsArrays ? valueArray : valueArray.join(',');
+        const value = listsAsArrays ? valueArray : joinWith(valueArray, ',');
         return valueSource
           ? { field, operator: 'between', value, valueSource }
           : { field, operator: 'between', value };

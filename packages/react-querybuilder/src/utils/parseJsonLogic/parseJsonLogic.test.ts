@@ -1,10 +1,14 @@
 import type {
   DefaultRuleGroupType,
   FullField,
+  JsonLogicReservedOperations,
   OptionGroup,
   RQBJsonLogic,
+  RuleGroupType,
+  RuleType,
   ValueSources,
 } from '../../types/index.noReact';
+import { isRuleGroup } from '../isRuleGroup';
 import { toFullOption } from '../toFullOption';
 import { parseJsonLogic } from './parseJsonLogic';
 
@@ -39,6 +43,7 @@ describe('valueSource: "value"', () => {
           { '<': [12, { var: 'f1' }, 14] },
           { '<': [true, { var: 'f1' }, false] },
           { '<=': ['Test', { var: 'f1' }, 'Test2'] },
+          { '<=': ['Test,Comma', { var: 'f1' }, 'Test2'] },
           { '<=': [12, { var: 'f1' }, 14] },
           { '<=': [true, { var: 'f1' }, false] },
         ],
@@ -84,6 +89,7 @@ describe('valueSource: "value"', () => {
           ],
         },
         { field: 'f1', operator: 'between', value: 'Test,Test2' },
+        { field: 'f1', operator: 'between', value: 'Test\\,Comma,Test2' },
         { field: 'f1', operator: 'between', value: '12,14' },
         { field: 'f1', operator: 'between', value: 'true,false' },
       ],
@@ -157,6 +163,7 @@ describe('valueSource: "value"', () => {
           { '!': { '<=': [12, { var: 'f1' }, 14] } },
           { '!': { '<=': [true, { var: 'f1' }, false] } },
           { '!': { in: [{ var: 'f1' }, ['Test', 'Test2']] } },
+          { '!': { in: [{ var: 'f1' }, ['Te,st', 'Test2']] } },
           { '!': { in: [{ var: 'f1' }, [12, 14]] } },
           { '!': { in: [{ var: 'f1' }, [true, false]] } },
         ],
@@ -192,6 +199,7 @@ describe('valueSource: "value"', () => {
         { field: 'f1', operator: 'notBetween', value: '12,14' },
         { field: 'f1', operator: 'notBetween', value: 'true,false' },
         { field: 'f1', operator: 'notIn', value: 'Test,Test2' },
+        { field: 'f1', operator: 'notIn', value: 'Te\\,st,Test2' },
         { field: 'f1', operator: 'notIn', value: '12,14' },
         { field: 'f1', operator: 'notIn', value: 'true,false' },
       ],
@@ -412,6 +420,35 @@ it('parses custom operations', () => {
       { combinator: 'and', rules: [] },
     ],
   });
+});
+
+it('parses custom group operations', () => {
+  const customGroupOpTests = [
+    ['and', { combinator: 'fooAnd', rules: [] }],
+    ['and', { field: 'fooAnd', operator: '=', value: 'and' }],
+    ['and', false],
+    ['or', { combinator: 'fooOr', rules: [] }],
+    ['or', { field: 'fooOr', operator: '=', value: 'or' }],
+    ['or', false],
+    ['!', { combinator: 'fooNot', rules: [], not: true }],
+    ['!', { field: 'fooNot', operator: '=', value: '!' }],
+    ['!', false],
+    ['!!', { combinator: 'fooNotNot', rules: [], not: true }],
+    ['!!', { field: 'fooNotNot', operator: '=', value: '!!' }],
+    ['!!', false],
+  ] satisfies [JsonLogicReservedOperations, RuleGroupType | RuleType | false][];
+
+  for (const [op, result] of customGroupOpTests) {
+    expect(
+      parseJsonLogic({ [op]: [] } as RQBJsonLogic, { jsonLogicOperations: { [op]: () => result } })
+    ).toEqual(
+      !result
+        ? { combinator: 'and', rules: [] }
+        : isRuleGroup(result)
+          ? result
+          : { combinator: 'and', rules: [result] }
+    );
+  }
 });
 
 it('translates lists as arrays', () => {

@@ -19,6 +19,7 @@ export default {
         'components/nottoggle',
         'components/draghandle',
         'components/shiftactions',
+        'components/inlinecombinator',
         'components/rulegroup',
         'components/rule',
       ],
@@ -54,6 +55,8 @@ export default {
       },
       items: [
         'tips/showcase',
+        'tips/option-lists',
+        'tips/maximizing-performance',
         'tips/managing-operators',
         'tips/custom-with-fallback',
         'tips/arbitrary-updates',
