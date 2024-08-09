@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
@@ -12,6 +11,7 @@ import {
   isRuleGroupType,
   pathsAreEqual,
 } from '../utils';
+import { clsx } from '../utils/clsx';
 
 /**
  * Prepares all values and methods used by the {@link RuleGroup} component.
@@ -66,7 +66,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
       ruleGroupProp && isRuleGroupType(ruleGroupProp)
         ? ruleGroupProp.combinator
         : !ruleGroupProp
-          ? combinatorProp ?? getFirstOption(combinators)!
+          ? (combinatorProp ?? getFirstOption(combinators)!)
           : getFirstOption(combinators)!,
     [combinatorProp, combinators, ruleGroupProp]
   );
@@ -247,7 +247,7 @@ export const useRuleGroup = (props: RuleGroupProps) => {
     [validationResult]
   );
   const combinatorBasedClassName = useMemo(
-    () => (independentCombinators ? null : getOption(combinators, combinator)?.className ?? ''),
+    () => (independentCombinators ? null : (getOption(combinators, combinator)?.className ?? '')),
     [combinator, combinators, independentCombinators]
   );
 

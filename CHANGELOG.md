@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-N/A
+### Added
+
+- [#755] New `controlElements` properties `ruleGroupHeaderElements` and `ruleGroupBodyElements`, enabling customization/replacement/augmentation of the subcomponents within the rule group header and body wrappers without needing to reimplement the entire `RuleGroup` component.
+- [#755] New `useQueryBuilderNative` hook. Works the same as `useQueryBuilder`, but tailored for React Native implementations.
+
+## [v7.6.1] - 2024-08-02
+
+### Fixed
+
+- Drag-and-drop hooks (`useReactDnD`, `useRuleDnD`, `useRuleGroupDnD`, and `useInlineCombinatorDnD`) are now exported from `@react-querybuilder/dnd`.
+- [#748] `formatQuery` correctly handles values that are lists of numbers when `parseNumbers` is `true`.
 
 ## [v7.6.0] - 2024-07-11
 
@@ -18,7 +28,7 @@ N/A
 
 ### Fixed
 
-- [#733] `parseSPeL` was not handling the `matches` operator correctly when its value was a single character.
+- [#733] `parseSpEL` was not handling the `matches` operator correctly when its value was a single character.
 - [#733] Improved `formatQuery` "elasticsearch" output for "contains" and "doesNotContain" operators.
 
 ## [v7.5.2] - 2024-06-27
@@ -1726,12 +1736,15 @@ Maintenance release focused on converting to a monorepo with Vite driving the bu
 [#730]: https://github.com/react-querybuilder/react-querybuilder/pull/730
 [#733]: https://github.com/react-querybuilder/react-querybuilder/pull/733
 [#734]: https://github.com/react-querybuilder/react-querybuilder/pull/734
+[#748]: https://github.com/react-querybuilder/react-querybuilder/pull/748
+[#755]: https://github.com/react-querybuilder/react-querybuilder/pull/755
 
 <!-- #endregion -->
 
 <!-- #region Release comparison links -->
 
-[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.0...HEAD
+[unreleased]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.1...HEAD
+[v7.6.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.6.0...v7.6.1
 [v7.6.0]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.2...v7.6.0
 [v7.5.2]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.1...v7.5.2
 [v7.5.1]: https://github.com/react-querybuilder/react-querybuilder/compare/v7.5.0...v7.5.1

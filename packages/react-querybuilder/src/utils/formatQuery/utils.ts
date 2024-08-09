@@ -4,6 +4,7 @@ import type {
   ValueProcessorByRule,
   ValueProcessorLegacy,
 } from '../../types/index.noReact';
+import { toArray } from '../arrayUtils';
 import { isRuleGroup } from '../isRuleGroup';
 import { numericRegex } from '../misc';
 import { parseNumber } from '../parseNumber';
@@ -66,7 +67,6 @@ export const jsonLogicAdditionalOperators = {
 
 export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
   ...rg,
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error TS doesn't keep track of odd/even indexes here
   rules: rg.rules.map(r => {
     if (typeof r === 'string') {
@@ -77,12 +77,21 @@ export const numerifyValues = (rg: RuleGroupTypeAny): RuleGroupTypeAny => ({
       return numerifyValues(r);
     }
 
-    let { value } = r;
-    if (typeof value === 'string') {
-      value = parseNumber(value, { parseNumbers: true });
+    if (Array.isArray(r.value)) {
+      return { ...r, value: r.value.map(v => parseNumber(v, { parseNumbers: true })) };
     }
 
-    return { ...r, value };
+    const va = toArray(r.value).map(v => parseNumber(v, { parseNumbers: true }));
+    if (va.every(v => typeof v === 'number')) {
+      // istanbul ignore else
+      if (va.length > 1) {
+        return { ...r, value: va };
+      } else if (va.length === 1) {
+        return { ...r, value: va[0] };
+      }
+    }
+
+    return r;
   }),
 });
 
@@ -110,7 +119,7 @@ export const quoteFieldNamesWithArray = (
     ? quoteFieldNamesWith
     : typeof quoteFieldNamesWith === 'string'
       ? [quoteFieldNamesWith, quoteFieldNamesWith]
-      : quoteFieldNamesWith ?? ['', ''];
+      : (quoteFieldNamesWith ?? ['', '']);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const nullOrUndefinedOrEmpty = (v: any) =>

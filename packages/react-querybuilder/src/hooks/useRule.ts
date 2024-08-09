@@ -1,4 +1,3 @@
-import { clsx } from 'clsx';
 import type { MouseEvent } from 'react';
 import { useCallback, useMemo } from 'react';
 import { standardClassnames } from '../defaults';
@@ -10,6 +9,7 @@ import {
   getParentPath,
   getValidationClassNames,
 } from '../utils';
+import { clsx } from '../utils/clsx';
 
 /**
  * Prepares all values and methods used by the {@link Rule} component.
@@ -201,7 +201,7 @@ export const useRule = (props: RuleProps) => {
     () =>
       typeof fieldData.valueSources === 'function'
         ? fieldData.valueSources(rule.operator)
-        : fieldData.valueSources ?? getValueSources(rule.field, rule.operator, { fieldData }),
+        : (fieldData.valueSources ?? getValueSources(rule.field, rule.operator, { fieldData })),
     [fieldData, getValueSources, rule.field, rule.operator]
   );
   const valueEditorType = useMemo(
@@ -219,7 +219,7 @@ export const useRule = (props: RuleProps) => {
     () =>
       rule.valueSource === 'field'
         ? filterFieldsByComparator(fieldData, fields, rule.operator)
-        : fieldData.values ?? getValues(rule.field, rule.operator, { fieldData }),
+        : (fieldData.values ?? getValues(rule.field, rule.operator, { fieldData })),
     [fieldData, fields, getValues, rule.field, rule.operator, rule.valueSource]
   );
   const valueSourceOptions = useMemo(
