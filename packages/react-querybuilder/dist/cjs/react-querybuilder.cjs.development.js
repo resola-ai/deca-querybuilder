@@ -4995,7 +4995,7 @@ var RuleGroupHeaderComponents = React10.memo(
         schema: rg.schema,
         ruleOrGroup: rg.ruleGroup
       }
-    ), rg.path.length > 0 && /* @__PURE__ */ React10.createElement("span", { className: "statement" }, "Any of the following are true..."), !rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && /* @__PURE__ */ React10.createElement(
+    ), !rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && /* @__PURE__ */ React10.createElement(
       CombinatorSelectorControlElement,
       {
         key: TestID.combinators,
@@ -5220,7 +5220,7 @@ var RuleGroupBodyComponents = React10.memo(
                 disabled: rg.disabled,
                 schema: rg.schema
               }
-            ) : idx > 1 && showCombinatorBetweenRules ? /* @__PURE__ */ React10.createElement("span", { className: rg.classNames.combinators }, rg.combinator) : rg.path.length === 0 && showCombinatorBetweenRules ? /* @__PURE__ */ React10.createElement("span", { className: rg.classNames.combinators }, "Where") : /* @__PURE__ */ React10.createElement("span", { className: rg.classNames.combinators })
+            ) : idx > 1 && showCombinatorBetweenRules ? /* @__PURE__ */ React10.createElement("span", { className: rg.classNames.combinators }, rg.combinator) : /* @__PURE__ */ React10.createElement("span", { className: rg.classNames.combinators })
           }
         ));
       }
