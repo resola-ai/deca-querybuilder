@@ -127,7 +127,6 @@ export const RuleGroupHeaderComponents = React.memo(
             ruleOrGroup={rg.ruleGroup}
           />
         )}
-        {rg.path.length > 0 && <span className="statement">Any of the following are true...</span>}
         {!rg.schema.showCombinatorsBetweenRules && !rg.schema.independentCombinators && (
           <CombinatorSelectorControlElement
             key={TestID.combinators}
@@ -360,8 +359,6 @@ export const RuleGroupBodyComponents = React.memo(
                         />
                       ) : idx > 1 && showCombinatorBetweenRules ? (
                         <span className={rg.classNames.combinators}>{rg.combinator}</span>
-                      ) : rg.path.length === 0 && showCombinatorBetweenRules ? (
-                        <span className={rg.classNames.combinators}>Where</span>
                       ) : (
                         <span className={rg.classNames.combinators} />
                       )
